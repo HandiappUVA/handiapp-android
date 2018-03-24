@@ -1,7 +1,9 @@
 package com.handiapp.handiapp;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -19,8 +21,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.PlaceDetectionClient;
-import com.google.android.gms.location.places.PlaceLikelihood;
-import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -131,9 +131,11 @@ public class MapsActivity extends AppCompatActivity
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        /*
         if (item.getItemId() == R.id.option_get_place) {
-            showCurrentPlace();
+            getDeviceLocation();
         }
+        */
         return true;
     }
 
@@ -210,6 +212,7 @@ public class MapsActivity extends AppCompatActivity
                         }
                     }
                 });
+                getNearMarkers(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()));
             }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
@@ -261,62 +264,21 @@ public class MapsActivity extends AppCompatActivity
      * Prompts the user to select the current place from a list of likely places, and shows the
      * current place on the map - provided the user has granted location permission.
      */
-    private void showCurrentPlace() {
+    private void getCurrentLocation() {
         if (mMap == null) {
             return;
         }
 
         if (mLocationPermissionGranted) {
-            // Get the likely places - that is, the businesses and other points of interest that
-            // are the best match for the device's current location.
-            @SuppressWarnings("MissingPermission") final
-            Task<PlaceLikelihoodBufferResponse> placeResult =
-                    mPlaceDetectionClient.getCurrentPlace(null);
-            placeResult.addOnCompleteListener
-                    (new OnCompleteListener<PlaceLikelihoodBufferResponse>() {
-                        @Override
-                        public void onComplete(@NonNull Task<PlaceLikelihoodBufferResponse> task) {
-                            if (task.isSuccessful() && task.getResult() != null) {
-                                PlaceLikelihoodBufferResponse likelyPlaces = task.getResult();
+            LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+            mMap.addMarker(new MarkerOptions()
+                    .title(getString(R.string.default_info_title))
+                    .position(new LatLng(latitude, longitude))
+                    .snippet(getString(R.string.default_info_snippet)));
 
-                                // Set the count, handling cases where less than 5 entries are returned.
-                                int count;
-                                count = M_MAX_ENTRIES;
-
-
-                                int i = 0;
-                                mLikelyPlaceNames = new String[count];
-                                mLikelyPlaceAddresses = new String[count];
-                                mLikelyPlaceAttributions = new String[count];
-                                mLikelyPlaceLatLngs = new LatLng[count];
-
-                                for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                                    // Build a list of likely places to show the user.
-                                    mLikelyPlaceNames[i] = (String) placeLikelihood.getPlace().getName();
-                                    mLikelyPlaceAddresses[i] = (String) placeLikelihood.getPlace()
-                                            .getAddress();
-                                    mLikelyPlaceAttributions[i] = (String) placeLikelihood.getPlace()
-                                            .getAttributions();
-                                    mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-
-                                    i++;
-                                    if (i > (count - 1)) {
-                                        break;
-                                    }
-                                }
-
-                                // Release the place likelihood buffer, to avoid memory leaks.
-                                //likelyPlaces.release();
-
-                                // Show a dialog offering the user the list of likely places, and add a
-                                // marker at the selected place.
-                                openPlacesDialog();
-
-                            } else {
-                                Log.e(TAG, "Exception: %s", task.getException());
-                            }
-                        }
-                    });
         } else {
             // The user has not granted permission.
             Log.i(TAG, "The user did not grant location permission.");
@@ -330,6 +292,10 @@ public class MapsActivity extends AppCompatActivity
             // Prompt the user for permission.
             getLocationPermission();
         }
+    }
+
+    public void getNearMarkers(LatLng curLoc){
+
     }
 
     /**
