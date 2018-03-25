@@ -23,7 +23,17 @@ android:layout_height="match_parent">
         android:id="@+id/flContent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/introText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="center_horizontal"
+            android:inputType="textPersonName"
+            android:text="Swipe to add SafeTrek and view region." />
+    </FrameLayout>
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -45,3 +55,4 @@ android:layout_height="match_parent">
     app:menu="@menu/drawer_view"
     app:headerLayout="@layout/nav_header"/>
 </android.support.v4.widget.DrawerLayout>
+

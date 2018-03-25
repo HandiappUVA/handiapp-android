@@ -1,4 +1,5 @@
 package com.handiapp.handiapp;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
+import static android.content.ContentValues.TAG;
 
 
 
@@ -81,6 +83,13 @@ public class MapsActivity extends AppCompatActivity {
         // Setup drawer view
         setupDrawerContent(nvDrawer);
         getLocationPermission();
+        Intent i = getIntent();
+        String action = i.getAction();
+        if (action.equalsIgnoreCase("android.intent.action.MAIN")) { //one logic
+
+        } else{ //another logic
+            Log.d(TAG, action);
+        }
 
     }
 
@@ -143,6 +152,7 @@ public class MapsActivity extends AppCompatActivity {
 
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
+        findViewById(R.id.introText).setVisibility(View.GONE);
         Fragment fragment = null;
         Class fragmentClass = MapFragment.class;
         switch (menuItem.getItemId()) {
@@ -153,7 +163,10 @@ public class MapsActivity extends AppCompatActivity {
                 fragmentClass = SafetyFragment.class;
                 break;
             case R.id.nav_third_fragment:
-                fragmentClass = MapFragment.class;
+                fragmentClass = AddFragment.class;
+                break;
+            case R.id.nav_fourth_fragment:
+                fragmentClass = SettingFragment.class;
                 break;
             default:
                 fragmentClass = MapFragment.class;

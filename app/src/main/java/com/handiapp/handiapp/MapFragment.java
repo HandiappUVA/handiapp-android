@@ -27,6 +27,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * A fragment that launches other parts of the demo application.
  */
@@ -75,6 +83,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         // create marker
 
         // Perform any camera updates here
+
         return v;
     }
 
@@ -126,6 +135,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
 
         // adding marker
         googleMap.addMarker(marker);
+        populateLocal();
 
         // Turn on the My Location layer and the related control on the map.
         //updateLocationUI();
@@ -168,8 +178,53 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         }
     }
 
+    public void populateLocal() {
+        String jsonString = null;
+        JSONObject jsonResponse = null;
+        try {
+            InputStream is = getActivity().getAssets().open("local.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            jsonString = new String(buffer, "UTF-8");
+            jsonResponse = new JSONObject(jsonString);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (jsonResponse != null) {
+            try {
+                JSONArray json = jsonResponse.getJSONArray("location");
+                for (int i = 0; i < json.length(); i++) {
+                    MarkerOptions marker = new MarkerOptions().position(
+                            new LatLng(Double.parseDouble((String)json.getJSONObject(i).get("Latitude")), Double.parseDouble((String)json.getJSONObject(i).get("Longitude")))).title("Hello Maps");
 
-    /**
+                    // Changing marker icon
+                    marker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+
+                    // adding marker
+                    if(marker!=null && googleMap != null){
+                        googleMap.addMarker(marker);
+                    }
+                    if (googleMap == null){
+                        Log.d(TAG, "Maps null.");
+                    }
+                    if (marker == null){
+                        Log.d(TAG, "Marker null.");
+                    }
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+        /**
      * Handles the result of the request for location permissions.
      */
     @Override
@@ -193,6 +248,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
      * Prompts the user to select the current place from a list of likely places, and shows the
      * current place on the map - provided the user has granted location permission.
      */
+    /*
     private void getCurrentLocation() {
         if (googleMap == null) {
             return;
