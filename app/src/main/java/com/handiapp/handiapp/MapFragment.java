@@ -198,12 +198,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
             try {
                 JSONArray json = jsonResponse.getJSONArray("location");
                 for (int i = 0; i < json.length(); i++) {
-                    MarkerOptions marker = new MarkerOptions().position(
-                            new LatLng(Double.parseDouble((String)json.getJSONObject(i).get("Latitude")), Double.parseDouble((String)json.getJSONObject(i).get("Longitude")))).title("Hello Maps");
+                    String title = "";
+                    MarkerOptions color;
+                    MarkerOptions marker = new MarkerOptions();
+                    if (Integer.parseInt((String)json.getJSONObject(i).get("Type")) == 3){
+                        title="Accessible Restroom";
+                        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                    }
+                    else if (Integer.parseInt((String)json.getJSONObject(i).get("Type")) == 1){
+                        title = "Elevators";
+                        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                    }
+                    else{
+                        title = "Accessible Parking";
+                        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    }
+                    marker.position(
+                            new LatLng(Double.parseDouble((String)json.getJSONObject(i).get("Latitude")), Double.parseDouble((String)json.getJSONObject(i).get("Longitude")))).title(title);
 
                     // Changing marker icon
-                    marker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+
 
                     // adding marker
                     if(marker!=null && googleMap != null){

@@ -122,9 +122,7 @@ public class SettingFragment extends Fragment {
         }
         */
     }
-
-    private void authKey() {
-        authKey();
+    public void authKey() {
         Log.d(TAG,"Button pressed.");
         String redirectUri = "https://handiapp-uva-hackathon.herokuapp.com/callback";
         String url = "https://account-sandbox.safetrek.io/authorize?client_id=m5qXF5ztOdT4cdQtUbZT2grBhF187vw6&scope=openid%20phone%20offline_access&response_type=code&redirect_uri=" + redirectUri;

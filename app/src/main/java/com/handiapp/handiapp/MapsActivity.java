@@ -1,6 +1,7 @@
 package com.handiapp.handiapp;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -91,6 +92,7 @@ public class MapsActivity extends AppCompatActivity {
             Log.d(TAG, action);
         }
 
+
     }
 
     /**
@@ -123,6 +125,15 @@ public class MapsActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         drawerToggle.syncState();
+    }
+    public void authKey() {
+        Log.d(TAG,"Button pressed.");
+        String redirectUri = "https://handiapp-uva-hackathon.herokuapp.com/callback";
+        String url = "https://account-sandbox.safetrek.io/authorize?client_id=m5qXF5ztOdT4cdQtUbZT2grBhF187vw6&scope=openid%20phone%20offline_access&response_type=code&redirect_uri=" + redirectUri;
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        System.out.println(url);
+        startActivity(intent);
+        intent.getData();
     }
 
     @Override

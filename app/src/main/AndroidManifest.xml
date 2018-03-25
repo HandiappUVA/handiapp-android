@@ -40,10 +40,8 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:host="callback"/>
-                <data android:host="handiapp"/>
-                <data android:host="handiapp.open"/>
-                <data android:scheme="handiapp"/>
+                <data android:scheme="com.handiapp.handiapp"
+                    android:host="oauth2"/>
             </intent-filter>
         </activity>
     </application>
